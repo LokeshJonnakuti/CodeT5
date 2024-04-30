@@ -2,11 +2,11 @@ from torch.utils.data import TensorDataset
 import numpy as np
 import logging
 import os
-import random
 import torch
 import time
 from tqdm import tqdm
 from _utils import *
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ def load_and_cache_gen_data(args, filename, pool, tokenizer, split_tag, only_src
     examples = read_examples(filename, args.data_num, args.task)
 
     if is_sample:
-        examples = random.sample(examples, min(5000, len(examples)))
+        examples = secrets.SystemRandom().sample(examples, min(5000, len(examples)))
     if split_tag == 'train':
         calc_stats(examples, tokenizer, is_tokenize=True)
     else:
@@ -51,7 +51,7 @@ def load_and_cache_clone_data(args, filename, pool, tokenizer, split_tag, is_sam
     cache_fn = '{}/{}.pt'.format(args.cache_path, split_tag + '_all' if args.data_num == -1 else '_%d' % args.data_num)
     examples = read_examples(filename, args.data_num, args.task)
     if is_sample:
-        examples = random.sample(examples, int(len(examples) * 0.1))
+        examples = secrets.SystemRandom().sample(examples, int(len(examples) * 0.1))
 
     calc_stats(examples, tokenizer, is_tokenize=True)
     if os.path.exists(cache_fn):
@@ -77,7 +77,7 @@ def load_and_cache_defect_data(args, filename, pool, tokenizer, split_tag, is_sa
     cache_fn = os.path.join(args.cache_path, split_tag)
     examples = read_examples(filename, args.data_num, args.task)
     if is_sample:
-        examples = random.sample(examples, int(len(examples) * 0.1))
+        examples = secrets.SystemRandom().sample(examples, int(len(examples) * 0.1))
 
     calc_stats(examples, tokenizer, is_tokenize=True)
     if os.path.exists(cache_fn):
@@ -144,7 +144,7 @@ def load_and_cache_multi_gen_data(args, pool, tokenizer, split_tag, only_src=Fal
                 filename = get_filenames(args.data_dir, args.task, args.sub_task, split_tag)
                 examples = read_examples(filename, args.data_num, args.task)
                 if is_sample:
-                    examples = random.sample(examples, min(5000, len(examples)))
+                    examples = secrets.SystemRandom().sample(examples, min(5000, len(examples)))
                 if split_tag == 'train':
                     calc_stats(examples, tokenizer, is_tokenize=True)
                 else:
